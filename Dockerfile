@@ -7,7 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 
 # Copy the actual source folder
-COPY HelpingHeart/src ./src
+COPY HelpingHeart/src
 
 # Build the jar
 RUN mvn clean package -DskipTests
