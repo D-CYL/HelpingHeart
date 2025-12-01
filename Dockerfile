@@ -1,9 +1,18 @@
+# Use Maven with JDK 17 (build stage)
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+
+WORKDIR /app
+
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+# Run stage (lighter image)
 FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
-COPY . .
+COPY --from=build /app/target/*.jar app.jar
 
-RUN mvn clean package -DskipTests
-
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["java", "-jar", "app.jar"]
