@@ -1,8 +1,6 @@
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -33,5 +31,8 @@ build/
 .vscode/
 
 ### Maven ###
-# Maven
 *.log
+
+### OS Files ###
+.DS_Store
+Thumbs.db
