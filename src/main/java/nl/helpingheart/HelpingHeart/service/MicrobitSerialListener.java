@@ -3,9 +3,8 @@ package nl.helpingheart.HelpingHeart.service;
 import com.fazecast.jSerialComm.SerialPort;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
-import nl.helpingheart.HelpingHeart.model.Button_event;
-import nl.helpingheart.HelpingHeart.repository.Button_eventRepository;
-
+import nl.helpingheart.HelpingHeart.model.Gebruiker;
+import nl.helpingheart.HelpingHeart.repository.GebruikerRepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,9 +13,9 @@ import java.time.LocalDateTime;
 @Component
 public class MicrobitSerialListener {
 
-    private final Button_eventRepository repository;
+    private final GebruikerRepository repository;
 
-    public MicrobitSerialListener(Button_eventRepository repository) {
+    public MicrobitSerialListener(GebruikerRepository repository) {
         this.repository = repository;
     }
 
@@ -54,20 +53,25 @@ public class MicrobitSerialListener {
         }
 
         System.out.println("✅ Listening on serial port: " + microbitPort.getSystemPortName());
-        SerialPort selectedPort = microbitPort;  // final for lambda
+        SerialPort selectedPort = microbitPort; // effectively final
+
         // Thread to continuously read serial input
         new Thread(() -> {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(selectedPort.getInputStream()))) {
+            try (BufferedReader reader =
+                         new BufferedReader(new InputStreamReader(selectedPort.getInputStream()))) {
+
                 String line;
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     System.out.println("📥 Received: " + line);
 
                     // Save to database
-                    Button_event event = new Button_event();
-                    event.setButton(line);
-                    event.setEventTime(LocalDateTime.now());
-                    repository.save(event);
+                    Gebruiker gebruiker = new Gebruiker();
+                    gebruiker.setKeuze(line);                 // "A" or "B"
+                    gebruiker.setDatum(LocalDateTime.now());  // DATETIME
+
+                    repository.save(gebruiker);
+                    System.out.println("💾 Saved to database");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
