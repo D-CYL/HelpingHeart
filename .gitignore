@@ -36,3 +36,6 @@ build/
 ### OS Files ###
 .DS_Store
 Thumbs.db
+
+# Environment / local config
+application.properties
