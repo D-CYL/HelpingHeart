@@ -47,6 +47,9 @@ public class MicrobitSerialListener {
 
         microbitPort.setBaudRate(115200);
 
+        microbitPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+
+
         if (!microbitPort.openPort()) {
             System.out.println("❌ Failed to open serial port: " + microbitPort.getSystemPortName());
             return;
@@ -64,7 +67,14 @@ public class MicrobitSerialListener {
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     System.out.println("📥 Received: " + line);
+                    
+                    // ✅ Only accept valid input
+                    if (!line.equals("A") && !line.equals("B")) {
+                        System.out.println("⚠️ Ignored invalid input: " + line);
+                        continue;
+                    }
 
+                    System.out.println("📥 Received: " + line);
                     // Save to database
                     Gebruiker gebruiker = new Gebruiker();
                     gebruiker.setKeuze(line);                 // "A" or "B"
@@ -72,6 +82,9 @@ public class MicrobitSerialListener {
 
                     repository.save(gebruiker);
                     System.out.println("💾 Saved to database");
+
+                    // ✅ Optional debounce
+                    Thread.sleep(50);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
