@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 public class MicrobitSerialListener {
 
     private final GebruikerRepository repository;
+    private final ProcessingNotifier notifier;
 
-    public MicrobitSerialListener(GebruikerRepository repository) {
+    public MicrobitSerialListener(GebruikerRepository repository, ProcessingNotifier notifier) {
         this.repository = repository;
+        this.notifier = notifier;
     }
 
     @PostConstruct
@@ -66,8 +68,8 @@ public class MicrobitSerialListener {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
-                    System.out.println("📥 Received: " + line);
-                    
+//                    System.out.println("📥 Received: " + line);
+
                     // ✅ Only accept valid input
                     if (!line.equals("A") && !line.equals("B")) {
                         System.out.println("⚠️ Ignored invalid input: " + line);
@@ -82,6 +84,9 @@ public class MicrobitSerialListener {
 
                     repository.save(gebruiker);
                     System.out.println("💾 Saved to database");
+
+                    // 🔔 Notify Processing
+                    notifier.sendEvent(line);
 
                     // ✅ Optional debounce
                     Thread.sleep(50);
