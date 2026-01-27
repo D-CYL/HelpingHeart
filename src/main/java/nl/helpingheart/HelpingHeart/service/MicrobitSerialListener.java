@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class MicrobitSerialListener {
 
     private final GebruikerRepository repository;
-    private final ProcessingNotifier notifier;
+//    private final ProcessingNotifier notifier;
 
-    public MicrobitSerialListener(GebruikerRepository repository, ProcessingNotifier notifier) {
+    public MicrobitSerialListener(GebruikerRepository repository) {
         this.repository = repository;
-        this.notifier = notifier;
+//        this.notifier = notifier;
     }
 
     @PostConstruct
@@ -86,7 +86,7 @@ public class MicrobitSerialListener {
                     System.out.println("💾 Saved to database");
 
                     // 🔔 Notify Processing
-                    notifier.sendEvent(line);
+//                    notifier.sendEvent(line);
 
                     // ✅ Optional debounce
                     Thread.sleep(50);
